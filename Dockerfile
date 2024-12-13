@@ -58,6 +58,9 @@ RUN composer install
 # ejecutar wait-for-it.sh sqlsrv:1433 --timeout=0 -- /bin/bash /docker-entrypoint-initdb.d/init-db.sh
 # copy /init-db.sh into /docker-entrypoint-initdb.d/init-db.sh
 COPY init-db.sh /docker-entrypoint-initdb.d/init-db.sh
+#change CRLF to LF
+RUN apt-get update && apt-get install -y dos2unix && \
+    dos2unix /docker-entrypoint-initdb.d/init-db.sh
 #verify the file is copied
 RUN ls -la /docker-entrypoint-initdb.d/init-db.sh
 RUN chmod +x /tmp/wait-for-it.sh /docker-entrypoint-initdb.d/init-db.sh
