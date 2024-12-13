@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\CargoController;
+use App\Http\Controllers\DepartamentoController;
+use App\Models\Departamento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::controller(CargoController::class)->prefix('cargos')->group(function () {
+    Route::get('/', 'index');
+});
+Route::controller(DepartamentoController::class)->prefix('departamentos')->group(function () {
+    Route::get('/', 'index');
 });
