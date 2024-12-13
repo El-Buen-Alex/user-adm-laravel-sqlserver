@@ -29,16 +29,11 @@ class DepartamentoController extends Controller
             } else {
                 $departamentos = $departamentosQ->get();
             }
-            return response()->json([
-                'data' => [
-                    'departamentos' => $departamentos
-                ]
-            ], 200);
+            $this->apiResponse->addData('departamentos', $departamentos);
+            $this->apiResponse->setSuccessMessage('Departamentos obtenidos');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los departamentos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 }

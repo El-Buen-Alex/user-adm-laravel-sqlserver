@@ -29,16 +29,11 @@ class CargoController extends Controller
             } else {
                 $cargos = $cargosQ->get();
             }
-            return response()->json([
-                'data' => [
-                    'cargos' => $cargos
-                ]
-            ], 200);
+            $this->apiResponse->addData('cargos', $cargos);
+            $this->apiResponse->setSuccessMessage('Cargos obtenidos');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los cargos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 }

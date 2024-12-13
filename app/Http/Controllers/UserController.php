@@ -23,27 +23,22 @@ class UserController extends Controller
                 'count' => $request->has('count') ? $request->count : null,
                 's' => $request->has('s') ? $request->s : null,
             ];
-            $cargosQ = User::where(function ($query) use ($q) {
+            $usuaiosQ = User::where(function ($query) use ($q) {
                 if ($q['s']) {
                     $query->where('usuario', 'like', '%' . $q['s'] . '%');
                 }
             });
             if ($q['count']) {
-                $cargos = $cargosQ->count();
+                $usuarios = $usuaiosQ->count();
             } else {
-                $cargos = $cargosQ->get();
+                $usuarios = $usuaiosQ->get();
             }
-            return response()->json([
-                'data' => [
-                    'usuarios' => $cargos
-                ]
-            ], 200);
+            $this->apiResponse->addData('usuarios', $usuarios);
+            $this->apiResponse->setSuccessMessage('Usuarios obtenidos');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los cargos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 
     /**
@@ -89,17 +84,13 @@ class UserController extends Controller
             $usuario->idCargo = $request->idCargo;
             $usuario->save();
             DB::commit();
-            return response()->json([
-                'message' => 'Usuario creado correctamente',
-                'data' => $usuario
-            ], 201);
+            $this->apiResponse->addData('usuario', $usuario);
+            $this->apiResponse->setSuccessMessage('Usuario creado correctamente', 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Error al obtener los datos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 
     /**
@@ -115,17 +106,12 @@ class UserController extends Controller
             if (!$user) {
                 throw new \Exception("El usuario no existe");
             }
-            return response()->json([
-                'data' => [
-                    'usuario' => $user
-                ]
-            ], 200);
+            $this->apiResponse->addData('usuario', $user);
+            $this->apiResponse->setSuccessMessage('Usuario obtenido correctamente');
         } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Error al obtener los datos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 
     /**
@@ -176,19 +162,13 @@ class UserController extends Controller
             $user->idCargo = $request->idCargo;
             $user->save();
             DB::commit();
-            return response()->json([
-                'message' => 'Usuario actualizado correctamente',
-                'data' => [
-                    'usuario' => $user
-                ]
-            ], 200);
+            $this->apiResponse->setSuccessMessage('Usuario actualizado correctamente');
+            $this->apiResponse->addData('usuario', $user);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Error al obtener los datos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 
     /**
@@ -215,18 +195,12 @@ class UserController extends Controller
             }
             $user->delete();
             DB::commit();
-            return response()->json([
-                'message' => 'Usuario eliminado correctamente',
-                'data' => [
-                    'usuario' => $user
-                ]
-            ], 200);
+            $this->apiResponse->setSuccessMessage('Usuario eliminado correctamente');
+            $this->apiResponse->addData('usuario', $user);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json([
-                'message' => 'Error al obtener los datos',
-                'error' => $e->getMessage()
-            ], 500);
+            $this->apiResponse->setErrorMessage($e->getMessage());
         }
+        return $this->response();
     }
 }
