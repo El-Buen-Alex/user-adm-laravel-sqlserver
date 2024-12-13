@@ -31,12 +31,12 @@ class DepartamentoController extends Controller
             }
             return response()->json([
                 'data' => [
-                    'cargos' => $departamentos
+                    'departamentos' => $departamentos
                 ]
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => 'Error al obtener los cargos',
+                'message' => 'Error al obtener los departamentos',
                 'error' => $e->getMessage()
             ], 500);
         }

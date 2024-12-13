@@ -17,4 +17,14 @@ class User extends Model
     protected $fillable = [
         'usuario', 'primerNombre', 'primerApellido', 'segundoApellido', 'idDepartamento', 'idCargo'
     ];
+
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class, 'idDepartamento');
+    }
+
+    public function cargo()
+    {
+        return $this->belongsTo(Cargo::class, 'idCargo');
+    }
 }
