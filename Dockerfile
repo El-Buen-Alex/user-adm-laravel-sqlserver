@@ -25,7 +25,7 @@ RUN apt-get update \
     && apt-get -y --no-install-recommends install \
         unixodbc-dev \
         msodbcsql17
-     
+
 RUN apt-get update && apt-get install -y \
     msodbcsql18 \
     mssql-tools \
@@ -58,7 +58,7 @@ RUN composer install
 # ejecutar wait-for-it.sh sqlsrv:1433 --timeout=0 -- /bin/bash /docker-entrypoint-initdb.d/init-db.sh
 # copy /init-db.sh into /docker-entrypoint-initdb.d/init-db.sh
 COPY init-db.sh /docker-entrypoint-initdb.d/init-db.sh
-#change CRLF to LF
+# #change CRLF to LF
 RUN apt-get update && apt-get install -y dos2unix && \
     dos2unix /docker-entrypoint-initdb.d/init-db.sh
 #verify the file is copied
