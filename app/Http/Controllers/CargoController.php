@@ -18,6 +18,7 @@ class CargoController extends Controller
             $q = [
                 'count' => $request->has('count') ? $request->count : null,
                 's' => $request->has('s') ? $request->s : null,
+                'forSearchs'=> $request->has('forSearchs') ? $request->forSearchs : null,
             ];
             $cargosQ = Cargo::where(function ($query) use ($q) {
                 if ($q['s']) {
@@ -27,7 +28,15 @@ class CargoController extends Controller
             if ($q['count']) {
                 $cargos = $cargosQ->count();
             } else {
-                $cargos = $cargosQ->get();
+                $cargos = $cargosQ->get()->toArray();
+                $aux=[];
+                if($q['forSearchs']==1){
+                    $aux=[
+                        'id'=>-1,
+                        'nombre'=>'Todos'
+                    ];
+                    array_unshift($cargos, $aux);
+                }
             }
             $this->apiResponse->addData('cargos', $cargos);
             $this->apiResponse->setSuccessMessage('Cargos obtenidos');

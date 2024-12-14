@@ -18,6 +18,7 @@ class DepartamentoController extends Controller
             $q = [
                 'count' => $request->has('count') ? $request->count : null,
                 's' => $request->has('s') ? $request->s : null,
+                'forSearchs'=> $request->has('forSearchs') ? $request->forSearchs : null,
             ];
             $departamentosQ = Departamento::where(function ($query) use ($q) {
                 if ($q['s']) {
@@ -27,7 +28,15 @@ class DepartamentoController extends Controller
             if ($q['count']) {
                 $departamentos = $departamentosQ->count();
             } else {
-                $departamentos = $departamentosQ->get();
+                $departamentos = $departamentosQ->get()->toArray();
+                $aux=[];
+                if($q['forSearchs']==1){
+                    $aux=[
+                        'id'=>-1,
+                        'nombre'=>'Todos'
+                    ];
+                    array_unshift($departamentos, $aux);
+                }
             }
             $this->apiResponse->addData('departamentos', $departamentos);
             $this->apiResponse->setSuccessMessage('Departamentos obtenidos');

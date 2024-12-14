@@ -24,8 +24,10 @@ class UserSeeder extends Seeder
         $user = User::create([
             'usuario' => 'alexp',
             'primerNombre' => 'Alex',
+            'segundoNombre' => 'David',
             'primerApellido' => 'Perez',
-            'segundoApellido' => '',
+            'segundoApellido' => 'Saldaña',
+            'email' => 'sistemas@prueba.com',
             'idDepartamento' => $departamento->id,
             'idCargo' => $cargo->id,
         ]);

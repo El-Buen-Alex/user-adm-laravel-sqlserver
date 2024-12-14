@@ -17,8 +17,10 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('usuario');
             $table->string('primerNombre');
+            $table->string('segundoNombre');
             $table->string('primerApellido');
             $table->string('segundoApellido');
+            $table->string('email');
             $table->foreignId('idDepartamento')->references('id')->on('departamentos');
             $table->foreignId('idCargo')->references('id')->on('cargos');
             $table->timestamps();

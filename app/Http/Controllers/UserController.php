@@ -22,12 +22,25 @@ class UserController extends Controller
             $q = [
                 'count' => $request->has('count') ? $request->count : null,
                 's' => $request->has('s') ? $request->s : null,
+                'cargoId'=>$request->has('cargoId') &&  $request->cargoId !=-1 ? $request->cargoId : null,
+                'departamentoId'=>$request->has('departamentoId') && $request->departamentoId!=-1 ? $request->departamentoId : null,
             ];
             $usuaiosQ = User::where(function ($query) use ($q) {
                 if ($q['s']) {
                     $query->where('usuario', 'like', '%' . $q['s'] . '%');
                 }
             });
+            if($q['cargoId']){
+                $usuaiosQ->whereHas('cargo', function($query) use ($q){
+                    $query->where('id', $q['cargoId']);
+                });
+            }
+            if($q['departamentoId']){
+                $usuaiosQ->whereHas('departamento', function($query) use ($q){
+                    $query->where('id', $q['departamentoId']);
+                });
+            }
+            $usuaiosQ->with(['cargo', 'departamento']);
             if ($q['count']) {
                 $usuarios = $usuaiosQ->count();
             } else {
@@ -57,15 +70,19 @@ class UserController extends Controller
                 'usuario' => 'required',
                 'primerNombre' => 'required',
                 'primerApellido' => 'required',
+                'segundoNombre' => 'required',
                 'segundoApellido' => 'required',
+                'email' => 'required',
                 'idDepartamento' => 'required|exists:departamentos,id',
                 'idCargo' => 'required|exists:cargos,id',
             ],
                 [
                 'usuario.required' => 'El campo usuario es requerido',
                 'primerNombre.required' => 'El campo primer nombre es requerido',
+                'segundoNombre.required' => 'El campo segundo nombre es requerido',
                 'primerApellido.required' => 'El campo primer apellido es requerido',
                 'segundoApellido.required' => 'El campo segundo apellido es requerido',
+                'email.required' => 'El campo email es requerido',
                 'idDepartamento.required' => 'El campo departamento es requerido',
                 'idDepartamento.exists' => 'El departamento no existe',
                 'idCargo.required' => 'El campo cargo es requerido',
@@ -78,11 +95,15 @@ class UserController extends Controller
             $usuario = new User();
             $usuario->usuario = $request->usuario;
             $usuario->primerNombre = $request->primerNombre;
+            $usuario->segundoNombre = $request->segundoNombre;
             $usuario->primerApellido = $request->primerApellido;
             $usuario->segundoApellido = $request->segundoApellido;
+            $usuario->email = $request->email;
             $usuario->idDepartamento = $request->idDepartamento;
             $usuario->idCargo = $request->idCargo;
             $usuario->save();
+            $usuario->load('cargo');
+            $usuario->load('departamento');
             DB::commit();
             $this->apiResponse->addData('usuario', $usuario);
             $this->apiResponse->setSuccessMessage('Usuario creado correctamente', 201);
@@ -131,15 +152,19 @@ class UserController extends Controller
                 'usuario' => 'required',
                 'primerNombre' => 'required',
                 'primerApellido' => 'required',
+                'segundoNombre' => 'required',
                 'segundoApellido' => 'required',
+                'email' => 'required',
                 'idDepartamento' => 'required|exists:departamentos,id',
                 'idCargo' => 'required|exists:cargos,id',
             ],
                 [
                 'usuario.required' => 'El campo usuario es requerido',
                 'primerNombre.required' => 'El campo primer nombre es requerido',
+                'segundoNombre.required' => 'El campo segundo nombre es requerido',
                 'primerApellido.required' => 'El campo primer apellido es requerido',
                 'segundoApellido.required' => 'El campo segundo apellido es requerido',
+                'email.required' => 'El campo email es requerido',
                 'idDepartamento.required' => 'El campo departamento es requerido',
                 'idDepartamento.exists' => 'El departamento no existe',
                 'idCargo.required' => 'El campo cargo es requerido',
@@ -149,21 +174,25 @@ class UserController extends Controller
             if ($validation->fails()) {
                 throw new \Exception($validation->errors()->first());
             }
-            $user = User::with(['departamento', 'cargo'])->find($id);
-            if (!$user) {
+            $usuario = User::with(['departamento', 'cargo'])->find($id);
+            if (!$usuario) {
                 throw new \Exception("El usuario no existe");
             }
 
-            $user->usuario = $request->usuario;
-            $user->primerNombre = $request->primerNombre;
-            $user->primerApellido = $request->primerApellido;
-            $user->segundoApellido = $request->segundoApellido;
-            $user->idDepartamento = $request->idDepartamento;
-            $user->idCargo = $request->idCargo;
-            $user->save();
+            $usuario->usuario = $request->usuario;
+            $usuario->primerNombre = $request->primerNombre;
+            $usuario->segundoNombre = $request->segundoNombre;
+            $usuario->primerApellido = $request->primerApellido;
+            $usuario->segundoApellido = $request->segundoApellido;
+            $usuario->email = $request->email;
+            $usuario->idDepartamento = $request->idDepartamento;
+            $usuario->idCargo = $request->idCargo;
+            $usuario->save();
+            $usuario->load('cargo');
+            $usuario->load('departamento');
             DB::commit();
             $this->apiResponse->setSuccessMessage('Usuario actualizado correctamente');
-            $this->apiResponse->addData('usuario', $user);
+            $this->apiResponse->addData('usuario', $usuario);
         } catch (\Exception $e) {
             DB::rollBack();
             $this->apiResponse->setErrorMessage($e->getMessage());

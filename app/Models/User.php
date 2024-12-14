@@ -15,7 +15,7 @@ class User extends Model
     use SoftDeletes;
     use HasFactory;
     protected $fillable = [
-        'usuario', 'primerNombre', 'primerApellido', 'segundoApellido', 'idDepartamento', 'idCargo'
+        'usuario', 'primerNombre','segundoNombre', 'primerApellido', 'segundoApellido', 'email','idDepartamento', 'idCargo'
     ];
 
     public function departamento()
